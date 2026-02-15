@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine's Surprise ❤️</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+    font-family:'Dancing Script', cursive;
+    height:100vh;
+    overflow:hidden;
+    text-align:center;
+    background: linear-gradient(45deg,#ff9a9e,#fad0c4,#ffdde1,#fbc2eb);
+    background-size: 400% 400%;
+    animation: gradientShift 20s ease infinite;
+}
+@keyframes gradientShift{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+h1{color:#ff0044;font-size:50px;text-shadow:2px 2px 5px #fff;}
+button{padding:12px 25px;font-size:22px;border-radius:12px;border:none;background-color:hotpink;color:white;cursor:pointer;box-shadow:0 0 15px rgba(255,0,68,0.6);transition:0.3s;}
+button:hover{transform:scale(1.05);}
+section{display:none; height:100vh; justify-content:center; align-items:center; flex-direction:column;}
+#step2, #step3, #step4{display:flex;}
+.mail-wrapper{
+    width:220px; height:160px; background:#fff; border-radius:10px;
+    display:flex; justify-content:center; align-items:center;
+    cursor:pointer; animation: tiltBounce 2s infinite ease-in-out; transition:0.3s;
+}
+.mail-wrapper:hover{animation:none; transform:scale(1.05);}
+.mail-wrapper::before{
+    content:""; position:absolute; top:0; transform: rotate(180deg);
+    width:210px; height:60px; background:#e74c3c; clip-path: polygon(50% 0,100% 100%,0 100%);
+}
+.heart{font-size:50px;}
+.letterBox{
+    width:300px; min-height:120px; background: rgba(255,255,255,0.9);
+    border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.3);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:15px; opacity:0; transform:translateY(50px); transition:0.5s;
+}
+.floatingHeart{position:absolute; font-size:30px; animation: floatUp 3s linear forwards;}
+@keyframes floatUp{0%{transform:translateY(0) rotate(0deg); opacity:1;}100%{transform:translateY(-800px) rotate(360deg); opacity:0;}}
+#popup{position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+background: rgba(255,0,68,0.95); color:white; padding:30px 50px; font-size:28px; border-radius:25px; display:none; text-align:center;}
+#popup button{margin-top:20px; padding:10px 25px; font-size:20px; border:none; border-radius:10px; background:white; color:#ff0044; cursor:pointer;}
+#popup button:hover{transform:scale(1.1);}
+</style>
+</head>
+<body>
+
+<!-- STEP 2: I HOPE YOU LOVE THIS -->
+<section id="step2">
+    <h1>I hope you love this…</h1>
+    <button onclick="goToStep3()">Continue</button>
+</section>
+
+<!-- STEP 3: ENVELOPE -->
+<section id="step3">
+    <div class="mail-wrapper" onclick="openLetter()">
+        <div class="heart">💌</div>
+    </div>
+</section>
+
+<!-- STEP 4: POEM -->
+<section id="step4">
+    <div id="box1" class="letterBox"></div>
+    <div id="box2" class="letterBox"></div>
+    <div id="box3" class="letterBox"></div>
+</section>
+
+<!-- SURPRISE POPUP -->
+<div id="popup">
+    💖 Will you be mine forever? 💖<br>
+    <button onclick="closePopup()">Yes! 💘</button>
+</div>
+
+<!-- BACKGROUND MUSIC -->
+<audio id="bgMusic" loop>
+    <source src="hold_you.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+// Step 1: Secret Prompt
+const correctName = "Reenay Gathoni";
+const correctAnswer = "26-12-2025";
+const step2 = document.getElementById("step2");
+const step3 = document.getElementById("step3");
+const step4 = document.getElementById("step4");
+const boxes = [document.getElementById("box1"),document.getElementById("box2"),document.getElementById("box3")];
+const popup = document.getElementById("popup");
+const music = document.getElementById("bgMusic");
+
+let name = prompt("Hi! What's your name?");
+if(name === correctName){
+    let answer = prompt("When did we start dating? (DD-MM-YYYY)");
+    if(answer === correctAnswer){
+        step2.style.display="flex";
+    } else {alert("Wrong date");}
+} else {alert("Wrong name");}
+
+// Go from Step 2 → Step 3
+function goToStep3(){
+    step2.style.display="none";
+    step3.style.display="flex";
+}
+
+// Open envelope → show poem
+function openLetter(){
+    step3.style.display="none";
+    step4.style.display="flex";
+    music.play();
+    const poemParts = [
+        "Reenay, my heart has been whispering your name\nFrom the moment we met, nothing feels the same.\nEvery smile of yours lights up my days,\nAnd in your eyes, I find endless ways.",
+        "I dream of mornings wrapped in your arms,\nNights under stars, lost in your charms.\nNo words could capture, no song could define,\nHow much I want you, how I wish you were all mine.",
+        "You are my joy, my laughter, my muse,\nEvery moment with you, I never want to lose.\nSo here’s my heart, open, true, and free,\nReenay, my love, I hope you see… it’s you and only you for me."
+    ];
+    poemParts.forEach((text,index)=>{
+        boxes[index].textContent="";
+        setTimeout(()=>{
+            boxes[index].style.opacity=1;
+            boxes[index].style.transform="translateY(0)";
+            typeText(boxes[index],text,0);
+        }, index*3000);
+    });
+    setInterval(()=>createHeart(),500);
+    setTimeout(()=>popup.style.display="block",15000);
+}
+
+function typeText(el,text,i){
+    if(i<text.length){ el.textContent+=text[i]; setTimeout(()=>typeText(el,text,i+1),30);}
+}
+
+function createHeart(){
+    const heart = document.createElement("div");
+    heart.textContent = ['💖','❤️','💘','💝','💕'][Math.floor(Math.random()*5)];
+    heart.classList.add("floatingHeart");
+    heart.style.left = Math.random()*window.innerWidth+"px";
+    heart.style.fontSize = (20+Math.random()*20)+"px";
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),3000);
+}
+
+function closePopup(){popup.style.display="none";}
+</script>
+</body>
+</html>
+
+
